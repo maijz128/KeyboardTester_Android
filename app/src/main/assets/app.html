@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <!--
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  -->
+  <title>Vue.js</title>
+  
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.min.js"></script>
+  <script src="jquery_1.11.3.min.js"></script>
+  <script src="keyboard_layout.js"></script>
+  
+  <link rel="stylesheet" href="style.css">
+  
+</head>
+
+<body>
+  <div id="vue-app">
+  <div class="">
+    <h1 class="title">{{heading}}</h1>
+    <div class="keyboard-menu" >
+      <span>键盘:</span>
+      <select v-model="selectedKeyboard">
+        <option disabled value="">请选择键盘</option>
+        <option v-for="keyboard in keyboards" v-bind:value="keyboard">{{keyboard.name}}</option>
+      </select>
+      <span> {{text}} </span>
+    </div>
+    <div class="keyboard-canvas" tabindex="0" v-bind:key="selectedKeyboard">
+      <ul>
+        <k-line v-for="(line,l) in selectedKeyboard.layout" v-bind:line="line">
+          <!-- 
+          <k-key v-for="(key, k) in line" v-bind:data="key" v-bind:pre-data="line[k-1]" ></k-key> -->
+        </k-line>
+      </ul>
+    </div>
+     <div id="status_box">
+       最後按鍵：<input type="text" id="last_key"></input>
+       持續時間：<input type="text" id="press_time"></input>
+       <button id="button_clear" v-on:click="clearState">清除狀態</button>
+     </div>
+     <h4>NKRO 測試</h4>
+     <p>測試鍵盤是否正確支援 NKRO (N-Key Rollover)</p>
+     <div id="test_box">
+       <div id="question"></div>
+       <div id="progress_box">
+         <div id="progress_bar"></div>
+       </div>
+       <button id="button_test">開始測試</button>
+     </div>
+     <p>訊息說明：</p>
+     <ul>
+       <li>最多輸入 6 鍵：某些 USB 鍵盤只支援同時輸出 6 鍵。</li>
+       <li>有按鍵衝突：因 keyboard matrix 電路設計，某些按鍵已被按下但無法被偵測。</li>
+       <li>有 ghost key：因 keyboard matrix 電路設計，某些按鍵沒被按下但被誤判為有按下。</li>
+     </ul>
+     <h4>已知問題</h4>
+     <ul>
+       <li>不支援 IE 8 及之前的版本</li>
+       <li>無法區分左、右 Ctrl, Alt, Shift 按鍵</li>
+       <li>無法區分主鍵區的 Enter 及數字鍵區的 Enter</li>
+       <li>Firefox 無法區分左右 Windows 鍵</li>
+       <li>按下 Windows 鍵會顯示開始</li>
+       <li>按下 Alt-Tab 後 Alt 鍵不會放開</li>
+       <li>按下 Menu 按鍵會顯示選單</li>
+       <li>Print Screen, Menu 無法正確計時</li>
+     </ul>
+     
+  </div>
+</div>
+  <!-- Project -->
+  <script src="app.js"></script>
+</body>
+</html>

@@ -10,6 +10,7 @@ import android.webkit.*;
 import java.io.*;
 import android.content.*;
 import android.support.v4.widget.*;
+import java.util.*;
 
 public class MainActivity extends Activity 
 {
@@ -25,6 +26,9 @@ public class MainActivity extends Activity
 	// printscreen (44) no keydown
 	// menu (93) no keyup
 	
+	String Keyboard_URL = "file:///android_asset/keyboard.html";
+	String APP_URL = "file:///android_asset/app.html";
+	String HOME_URL = APP_URL;	
 	WebView mWebView;
 	TextView tv;
 	SwipeRefreshLayout swipeRefresh;
@@ -62,8 +66,6 @@ public class MainActivity extends Activity
     public boolean onKeyUp(int keyCode, KeyEvent event)
 	{
 
-		
-
 		String keyName = KeyMap.getKeyText(keyCode);
 		tv.setText(String.valueOf(keyCode) + " - " + keyName);
 
@@ -92,7 +94,7 @@ public class MainActivity extends Activity
 		WebView myWebView = (WebView) findViewById(R.id.webview);
 		//myWebView.loadUrl("http://www.example.com");
 		//加载本地assets目录下的网页
-		myWebView.loadUrl("file:///android_asset/keyboard.html");
+		myWebView.loadUrl(HOME_URL);
 		//加载手机本地的html页面
 
 
@@ -197,6 +199,8 @@ public class MainActivity extends Activity
 					
 					tv.setText("onPageFinished");
 					
+					callJavaScript(mWebView, "activeAppMode");
+					
 					//callJavaScript(mWebView, "hello");
 					/*
 					mWebView.evaluateJavascript("javascript:hello()", new ValueCallback<String>() {
@@ -228,15 +232,29 @@ public class MainActivity extends Activity
 				public WebResourceResponse shouldInterceptRequest(WebView webView, String url)
 				{
 					//Log.i("TAG***", "***"+url);
-					String jquery = "jquery_1.11.3.min.js";
-					if (url.contains(jquery))
-					{
+					//String jquery = "jquery_1.11.3.min.js";
+					String mimeType =  null;
+					
+					HashMap<String, String> mimeMap = new HashMap<String, String>();
+					mimeMap.put(".js", "text/javascript");
+					mimeMap.put(".css", "text/css");
+					mimeMap.put(".html",  "text/html");
+					mimeMap.put(".txt", "text/plain");
+
+					for (String key : mimeMap.keySet()){
+						if (url.toLowerCase().endsWith(key)){
+							mimeType = mimeMap.get(key);
+						}
+					}					
+					
+					if (mimeType != null){
 						//Log.i("TAG***", "***"+url);
 						try
 						{
 							//Log.i("TAG***", "加载本地jquery.js");
-							return new WebResourceResponse("application/x-javascript",
-														   "utf-8", getAssets().open(jquery));
+							//return new WebResourceResponse("application/x-javascript",
+							//							   "utf-8", getAssets().open(jquery));
+							return new  WebResourceResponse(mimeType,  "utf-8", getAssets().open(url));
 						}
 						catch (IOException e)
 						{
